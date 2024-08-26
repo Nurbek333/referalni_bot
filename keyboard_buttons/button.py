@@ -5,7 +5,8 @@ main_keyboard = ReplyKeyboardMarkup(
     keyboard=[
         [
             KeyboardButton(text="Referal link"),
-            KeyboardButton(text="Mening ballarim")
+            KeyboardButton(text="Mening ballarim"),
+            KeyboardButton(text="Do'stlarim")
         ]
     ],
     resize_keyboard=True
