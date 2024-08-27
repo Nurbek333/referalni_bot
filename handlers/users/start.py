@@ -1,11 +1,14 @@
 from aiogram.types import Message
 from loader import dp, db, bot
-from aiogram.filters import CommandStart
+from aiogram.filters import CommandStart,Command
 from keyboard_buttons.button import main_keyboard
-
+import io
+from baza.sqlite import Database
+import pandas as pd
+from aiogram.types import BufferedInputFile
 # Foydalanuvchi botni boshlaganda yoki referal orqali kirganda
 # Start command handler
-
+from aiogram.methods.send_chat_action import SendChatAction
 @dp.message(CommandStart())
 async def start_command(message: Message):
     user_id = message.from_user.id
@@ -70,5 +73,77 @@ async def my_points(message: Message):
     )
     await message.answer_photo(photo=photo, caption=response_text, parse_mode="Markdown")
 
+
+
+# Bu yerda har bir o'rin uchun mos stikerlarni ro'yxat qilib olamiz
+stickers = [
+    "🥇",  # 1-o'rin
+    "🥈",  # 2-o'rin
+    "🥉",  # 3-o'rin
+    "🏅",  # 4-o'rin
+    "🎖",  # 5-o'rin
+    "🏆",  # 6-o'rin
+    "🎗",  # 7-o'rin
+    "🎟",  # 8-o'rin
+    "🔖",  # 9-o'rin
+    "🎫"   # 10-o'rin
+]
+
+@dp.message(lambda message: message.text == "Top 10 Foydalanuvchilar")
+async def handle_top_users(message: Message):
+    top_users = db.get_top_users_by_points()
+    if not top_users:
+        await message.answer("No users found.")
+        return
+    
+    text = "🏆 Top Users by Points 🏆\n\n"
+    for idx, user in enumerate(top_users):
+        sticker = stickers[idx] if idx < len(stickers) else "🔸"  # Agar ro'yxatda stikerlar tugasa, oddiy belgi ishlatamiz
+        text += f"<b>{sticker} Username: {user[1]}, Points: {user[2]}</b>\n\n"
+    
+    await message.answer(text)
+
+
+
+
+@dp.message(Command("foyda"))
+async def export_to_excel(message: Message):
+    # Admin IDni belgilash (bu yerda adminning Telegram ID sini qo'ying)
+    ADMIN_ID = 6214256605
+
+    if message.from_user.id != ADMIN_ID:
+        await message.answer("Sizda ushbu buyrug'ni bajarish huquqi yo'q.")
+        return
+
+    # Foydalanuvchi ma'lumotlarini olish (masalan, database dan)
+    users = db.select_all_users()
+
+    # Ma'lumotlarni pandas DataFrame formatida olish
+    df = pd.DataFrame(users, columns=["user_id", "username", "points", "referrer_id", "level_1_points", "level_2_points", "level_3_points"])
+
+    # Excel faylga saqlash
+    buffer = io.BytesIO()
+    with pd.ExcelWriter(buffer, engine='openpyxl') as writer:
+        df.to_excel(writer, sheet_name='Users', index=False)
+    
+    buffer.seek(0)  # Fayl o'qish uchun boshlanishiga qaytarish
+
+    # Faylni Diskka Saqlash
+    with open('users_data.xlsx', 'wb') as f:
+        f.write(buffer.getvalue())
+
+
+    await bot.send_document(
+        message.from_user.id, 
+        BufferedInputFile.from_file('C:\\Users\\Professional\\Desktop\\Simple-Aiogram-Template-master\\users_data.xlsx')
+    )
+
+
+    # Faylni diskdan o'chirish (agar kerak bo'lsa)
+    import os
+    # os.path('users_data.xlsx')
+    os.remove('users_data.xlsx')
+
+    await message.answer("Ma'lumotlar Excel faylga saqlandi va yuborildi.")
 
 

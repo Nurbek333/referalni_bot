@@ -1,5 +1,6 @@
 import sqlite3
 
+
 class Database:
     def __init__(self, path_to_db="main.db"):
         self.path_to_db = path_to_db
@@ -203,6 +204,19 @@ class Database:
         return result[0] if result else None
 
 
+    def get_top_users_by_points(self, top_n=10):
+        sql = """
+        SELECT user_id, username, SUM(points) AS total_points
+        FROM users
+        GROUP BY user_id, username
+        ORDER BY total_points DESC
+        LIMIT ?;
+        """
+        return self.execute(sql, parameters=(top_n,), fetchall=True)
+    
+
+    
+    
 def logger(statement):
     print(f"""
 _____________________________________________________        

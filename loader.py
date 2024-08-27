@@ -3,7 +3,6 @@ from data import config
 from baza.sqlite import Database
 from aiogram.enums import ParseMode
 
-
 ADMINS = config.ADMINS
 TOKEN = config.BOT_TOKEN
 CHANNELS = config.CHANNELS
