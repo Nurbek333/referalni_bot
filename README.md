@@ -13,6 +13,16 @@ Ushbu bot referal tizimi asosida ishlaydi va foydalanuvchilarni kanallarga qo'sh
 - **Kanallarga qo'shilish**: Bot foydalanuvchilarni belgilangan kanallarga qo'shilishni talab qiladi.
 - **Reklamalarni boshqarish**: Adminlar foydalanuvchilarga reklamalar yuborishi mumkin.
 
+## Foydalanish
+
+Botni foydalanish juda oson. Quyidagi amallarni bajaring:
+
+1. Telegram orqali botni toping va `/start` buyrug'ini yuboring.
+2. Bot sizga shaxsiy referal havolani beradi. Ushbu havolani do'stlaringiz va tanishlaringizga yuboring.
+3. Taklif qilingan har bir yangi foydalanuvchi orqali ochkolaringiz oshiriladi.
+4. Bot tomonidan belgilangan kanallarga qo'shiling va faoliyatni davom ettiring.
+5. Agar admin sizga reklama yuborsa, bot orqali xabar olishingiz mumkin.
+
 ## O'rnatish
 
 Loyihani o'rnatish uchun quyidagi amallarni bajaring:
@@ -22,3 +32,11 @@ Loyihani o'rnatish uchun quyidagi amallarni bajaring:
    ```bash
    git clone https://github.com/Nurbek333/referalni_bot.git
    cd referalni_bot
+
+
+## Virtual muhit yaratish va kerakli kutubxonalarni o'rnatish
+
+```bash
+python -m venv venv
+source venv/bin/activate  # Windows uchun: venv\Scripts\activate
+pip install -r requirements.txt
