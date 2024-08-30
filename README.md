@@ -1,24 +1,24 @@
-# Aiogram 3 New Template (SQLite db)
+# Referralni Bot
 
-### 1. Create virtual environment and install packages
-Windows
-```shell
-python -m venv venv && venv\Scripts\activate && pip install -r requirements.txt
-```
+**Referralni Bot** — bu Telegram bot bo'lib, foydalanuvchilarni referal havolalar orqali kanallarga jalb qilishni osonlashtiradi. Foydalanuvchilar bot orqali referal havola olishlari va yangi foydalanuvchilarni taklif qilishlari mumkin.
 
-Linux/Mac
-```shell
-python3 -m venv venv && source venv/bin/activate && pip3 install -r requirements.txt
-```
+## Loyihaning maqsadi
 
-### 2. Create .env file and copy all variables from .env_example to it and customize your self (if needed)
+Ushbu bot referal tizimi asosida ishlaydi va foydalanuvchilarni kanallarga qo'shishni rag'batlantiradi. Har bir foydalanuvchi o'zining shaxsiy referal havolasini oladi va ushbu havola orqali kelgan yangi foydalanuvchilar hisobga olinadi.
 
-### 3. Run app.py
-Windows
-```shell
-python app.py
-```
-Linux/Mac
-```shell
-python3 app.py
-```
+## Funksionallik
+
+- **Referal havola yaratish**: Har bir foydalanuvchi o'zining shaxsiy referal havolasini oladi.
+- **Taklif qilingan foydalanuvchilarni hisoblash**: Har bir referal orqali kelgan yangi foydalanuvchilar soni bot tomonidan kuzatib boriladi.
+- **Kanallarga qo'shilish**: Bot foydalanuvchilarni belgilangan kanallarga qo'shilishni talab qiladi.
+- **Reklamalarni boshqarish**: Adminlar foydalanuvchilarga reklamalar yuborishi mumkin.
+
+## O'rnatish
+
+Loyihani o'rnatish uchun quyidagi amallarni bajaring:
+
+1. Repozitoriyani klonlash:
+
+   ```bash
+   git clone https://github.com/Nurbek333/referalni_bot.git
+   cd referalni_bot
