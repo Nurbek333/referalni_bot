@@ -6,6 +6,14 @@
 
 Ushbu bot referal tizimi asosida ishlaydi va foydalanuvchilarni kanallarga qo'shishni rag'batlantiradi. Har bir foydalanuvchi o'zining shaxsiy referal havolasini oladi va ushbu havola orqali kelgan yangi foydalanuvchilar hisobga olinadi.
 
+## Ushbu botni yaratishda quyidagi texnologiyalardan foydalanilgan:
+
+- **Python 3.11: Asosiy dasturlash tili.
+- **Aiogram 3: Telegram botlari bilan ishlash uchun asinxron kutubxona.
+- **SQLite: Foydalanuvchi ma'lumotlarini saqlash uchun engil ma'lumotlar bazasi.
+- **dotenv: Maxfiy ma'lumotlarni .env fayli orqali boshqarish.
+- **Logging: Botning faoliyatini kuzatish va diagnostika qilish uchun loglar.
+
 ## Funksionallik
 
 - **Referal havola yaratish**: Har bir foydalanuvchi o'zining shaxsiy referal havolasini oladi.
@@ -40,3 +48,5 @@ Loyihani o'rnatish uchun quyidagi amallarni bajaring:
 python -m venv venv
 source venv/bin/activate  # Windows uchun: venv\Scripts\activate
 pip install -r requirements.txt
+
+
