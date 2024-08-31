@@ -1,5 +1,5 @@
 from filters.check_sub_channel import IsCheckSubChannels
-from loader import bot,db,dp,CHANNELS,ADMINS
+from loader import bot,db,dp,ADMINS
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import Message,InlineKeyboardButton,InlineKeyboardMarkup
 from aiogram.filters import Command
@@ -11,7 +11,6 @@ import time
 import sqlite3
 from datetime import datetime
 from aiogram import F
-
 
 
 @dp.message(Command("admin"),IsBotAdminFilter(ADMINS))
@@ -35,7 +34,7 @@ async def send_advert(message:Message,state:FSMContext):
     
     message_id = message.message_id
     from_chat_id = message.from_user.id
-    users = db.all_users_id()
+    users = db.get_all_users_id()
     count = 0
     for user in users:
         try:
@@ -99,6 +98,12 @@ class Database:
 
     def count_users(self):
         return self.execute("SELECT COUNT(*) FROM Users;", fetchone=True)
+    
+    def get_all_users_id(self):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT user_id FROM users")
+        users = cursor.fetchall()
+        return users
 
 db = Database()
 

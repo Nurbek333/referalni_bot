@@ -12,16 +12,6 @@ from loader import bot,dp,CHANNELS
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import Message,InlineKeyboardButton
 
-@dp.message(IsCheckSubChannels())
-async def kanalga_obuna(message:Message):
-    text = ""
-    inline_channel = InlineKeyboardBuilder()
-    for index,channel in enumerate(CHANNELS):
-        ChatInviteLink = await bot.create_chat_invite_link(channel)
-        inline_channel.add(InlineKeyboardButton(text=f"{index+1}-kanal",url=ChatInviteLink.invite_link))
-    inline_channel.adjust(1,repeat=True)
-    button = inline_channel.as_markup()
-    await message.answer(f"{text} kanallarga azo bo'ling",reply_markup=button)
 
 @dp.message(CommandStart())
 async def start_command(message: Message):
@@ -53,7 +43,16 @@ async def start_command(message: Message):
 
     await message.answer("Salom! Quyidagi tugmalar orqali botdan foydalaning:", reply_markup=main_keyboard)
 
-
+@dp.message(IsCheckSubChannels())
+async def kanalga_obuna(message:Message):
+    text = ""
+    inline_channel = InlineKeyboardBuilder()
+    for index,channel in enumerate(CHANNELS):
+        ChatInviteLink = await bot.create_chat_invite_link(channel)
+        inline_channel.add(InlineKeyboardButton(text=f"{index+1}-kanal",url=ChatInviteLink.invite_link))
+    inline_channel.adjust(1,repeat=True)
+    button = inline_channel.as_markup()
+    await message.answer(f"{text} kanallarga azo bo'ling",reply_markup=button)
 
 
 @dp.message(lambda message: message.text == "Referal link")
@@ -164,3 +163,39 @@ async def export_to_excel(message: Message):
     await message.answer("Ma'lumotlar Excel faylga saqlandi va yuborildi.")
 
 
+
+
+@dp.message(Command('my_points'))
+async def my_points(message: Message):
+    user_id = message.from_user.id
+    points = db.get_user_points(user_id)
+    photo = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtWRPo-AEN1M9MvQbhJsxNdpHx-83Sld_z3DLGfVVQoIOl2iwFidtclCUfadqWN_it25Q&usqp=CAU"
+    response_text = (
+        f"🎉 Sizning hozirgi ballaringiz: *{points:.1f}* 🎉\n\n"
+        "💡 *Ballaringizni yig'ish orqali siz botdagi maxsus imkoniyatlardan foydalanishingiz mumkin.*\n\n"
+        "🔓 *Bonuslar ro'yxati:* \n\n"
+        "1️⃣  *10 ball* - 🎁 Maxsus sovg'a\n\n"
+        "2️⃣  *20 ball* - ⚙️ Qo'shimcha funksiyalar\n\n"
+        "3️⃣  *50 ball* - 💸 Chegirmali takliflar\n\n"
+        "🔗 *Referal havolangizni do'stlaringiz bilan ulashing va ko'proq ball yig'ing!*"
+    )
+    await message.answer_photo(photo=photo, caption=response_text, parse_mode="Markdown")
+
+
+@dp.message(Command('referal'))
+async def referal_link(message: Message):
+    user_id = message.from_user.id
+    referal_link = f"https://t.me/dwefe_bot?start={user_id}"
+    photo = "https://elements-cover-images-0.imgix.net/bf00ec3e-a269-471f-aaca-bf940f26d67c?q=80&w=316&fit=max&fm=jpeg&s=e261ce5ef60df18f3d047fb88ee5502c"
+    response_text = (
+        f"🌟 <b>Sizning referal havolangiz tayyor!</b> 🌟\n\n"
+        "<b>Sizning referal havolangizni do'stlaringizga ulashing va botdan ko'proq foyda ko'ring:</b>\n\n"
+        f"➡️ <code>{referal_link}</code>\n\n"
+        "📈 <b>Har bir yangi foydalanuvchi uchun siz ball olasiz!</b> \n\n"
+        "<b>Katta bonuslarga ega bo'lish uchun imkoniyatni qo'ldan boy bermang:</b>\n\n"
+        "1️⃣ <b>Ko'proq ball yig'ing</b>\n\n"
+        "2️⃣ <b>Eksklyuziv sovg'alarga ega bo'ling</b>\n\n"
+        "3️⃣ <b>Maxsus chegirmalar va imkoniyatlardan foydalaning</b>\n\n"
+        "🤝 <b>Do'stlaringizni taklif qiling va imkoniyatlaringizni kengaytiring!</b>"
+    )
+    await message.answer_photo(photo=photo, caption=response_text, parse_mode="html")
