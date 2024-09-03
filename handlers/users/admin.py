@@ -23,6 +23,55 @@ async def is_admin(message:Message):
 #     counts = db.count_users()
 #     text = f"Botimizda {counts[0]} ta foydalanuvchi bor"
 #     await message.answer(text=text)
+    
+
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from aiogram.types import FSInputFile
+
+# PDF yaratish funksiyasi
+def generate_referral_pdf(users_with_referrals):
+    pdf_file = "referral_stats.pdf"
+    c = canvas.Canvas(pdf_file, pagesize=letter)
+    width, height = letter
+    y = height - 40  # PDFni yuqorisidan boshlaymiz
+
+    c.setFont("Helvetica-Bold", 16)
+    c.drawString(100, y, "Foydalanuvchilar va ularning referral soni:")
+    
+    y -= 30
+    c.setFont("Helvetica", 12)
+
+    if not users_with_referrals:
+        c.drawString(100, y, "Hozircha hech kim referral qilmagan.")
+    else:
+        for idx, (user_id, username, referrals_count) in enumerate(users_with_referrals, start=1):
+            c.drawString(100, y, f"{idx}. {username} - Referral soni: {referrals_count}")
+            y -= 20  # Har bir qator orasida bo'sh joy qoldiramiz
+
+    c.save()
+    return pdf_file
+
+
+@dp.message(F.text=="Referallar soni")
+async def show_referral_stats(message: Message):
+    user_id = message.from_user.id
+    
+    # Foydalanuvchini adminlar ro'yxatidan tekshiramiz
+    if user_id not in ADMINS:
+        await message.answer("Siz bu buyruqdan foydalana olmaysiz, faqat adminlar foydalanishi mumkin.")
+        return
+
+    # Agar foydalanuvchi admin bo'lsa, referral statistikasini ko'rsatamiz
+    users_with_referrals = db.get_users_with_referral_counts()
+
+    # PDF yaratish
+    pdf_file = generate_referral_pdf(users_with_referrals)
+    
+    # PDF file’ni jo'natish
+    pdf_document = FSInputFile(pdf_file)
+    await message.answer_document(pdf_document)
+    
 
 @dp.message(F.text=="Reklama yuborish",IsBotAdminFilter(ADMINS))
 async def advert_dp(message:Message,state:FSMContext):
@@ -104,6 +153,19 @@ class Database:
         cursor.execute("SELECT user_id FROM users")
         users = cursor.fetchall()
         return users
+    
+    def get_users_with_referral_counts(self):
+        """
+        Har bir foydalanuvchining username va referral sonini kamayish tartibida qaytaradi.
+        """
+        sql = """
+        SELECT u.user_id, u.username, COUNT(r.referred_id) AS referrals_count
+        FROM users u
+        LEFT JOIN Referrals r ON u.user_id = r.referrer_id
+        GROUP BY u.user_id, u.username
+        ORDER BY referrals_count DESC;  -- Referral soni bo'yicha kamayish tartibida
+        """
+        return self.execute(sql, fetchall=True)
 
 db = Database()
 

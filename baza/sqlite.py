@@ -204,16 +204,52 @@ class Database:
         return result[0] if result else None
 
 
-    def get_top_users_by_points(self, top_n=10):
+    # def get_top_users_by_points(self, top_n=10):
+    #     sql = """
+    #     SELECT user_id, username, SUM(points) AS total_points
+    #     FROM users
+    #     GROUP BY user_id, username
+    #     ORDER BY total_points DESC
+    #     LIMIT ?;
+    #     """
+    #     return self.execute(sql, parameters=(top_n,), fetchall=True)
+
+    
+    def get_top_users_by_referrals(self, limit=10):
         sql = """
-        SELECT user_id, username, SUM(points) AS total_points
-        FROM users
-        GROUP BY user_id, username
-        ORDER BY total_points DESC
+        SELECT u.user_id, u.username, COUNT(r.referred_id) as referrals_count
+        FROM users u
+        LEFT JOIN referrals r ON u.user_id = r.referrer_id
+        GROUP BY u.user_id, u.username
+        ORDER BY referrals_count DESC
         LIMIT ?;
         """
-        return self.execute(sql, parameters=(top_n,), fetchall=True)
+        return self.execute(sql, parameters=(limit,), fetchall=True)
+
+    def get_user_referral_count(self, user_id: int):
+        """
+        Admin uchun har bir foydalanuvchining nechta odamni taklif qilganligini olish.
+        """
+        sql = """
+        SELECT COUNT(referred_id) 
+        FROM Referrals 
+        WHERE referrer_id = ?;
+        """
+        result = self.execute(sql, parameters=(user_id,), fetchone=True)
+        return result[0] if result else 0
     
+    def get_users_with_referral_counts(self):
+        """
+        Har bir foydalanuvchining username va referral sonini kamayish tartibida qaytaradi.
+        """
+        sql = """
+        SELECT u.user_id, u.username, COUNT(r.referred_id) AS referrals_count
+        FROM users u
+        LEFT JOIN Referrals r ON u.user_id = r.referrer_id
+        GROUP BY u.user_id, u.username
+        ORDER BY referrals_count DESC;  -- Referral soni bo'yicha kamayish tartibida
+        """
+        return self.execute(sql, fetchall=True)
 
     
     
